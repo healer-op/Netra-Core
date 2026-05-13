@@ -15,43 +15,43 @@
 -   **🎨 Cyberpunk Aesthetic:** A high-performance, dark-themed UI built for speed and clarity.
 -   **🛡️ Privacy First:** No accounts, no tracking, and no rate limits. Results are served directly via global CDNs.
 
-## 🛠️ Installation & Setup
+## 📥 Download & Install
 
-### Prerequisites
--   [Node.js](https://nodejs.org/) (v16 or higher recommended)
--   [npm](https://www.npmjs.com/)
+The easiest way to use **Netra Core** is to download the pre-built binaries for your operating system.
 
-### Clone & Install
-```bash
-git clone https://github.com/healer-op/Netra-Core.git
-cd Netra-Core
-npm install
-```
+### 🚀 Get Latest Release
+Visit the [GitHub Releases](https://github.com/healer-op/Netra-Core/releases/latest) page to download the latest version:
 
-### Run in Development
-```bash
-npm start
-```
+- **Windows:** Download the `.exe` (Portable or Setup).
+- **macOS:** Download the `.dmg` package.
+- **Linux:** Download the `.AppImage` (Universal).
 
-## 📦 Building for Production
+---
 
-Netra uses `electron-builder` for optimized, small-footprint production builds.
+### 🛠️ Development & Building from Source
+If you are a developer and wish to contribute or build Netra yourself:
 
-### 🏗️ Local Builds (Windows/Linux only on Windows)
-| Command | Target | Output Format |
-| :--- | :--- | :--- |
-| `npm run build:win` | Windows | Portable (.exe) |
-| `npm run build:linux` | Linux | AppImage |
-| `npm run build:local` | Win + Linux | Both formats |
-
-> **Note:** macOS builds require a macOS environment and cannot be performed natively on Windows.
-
-### 🚀 Automated Multi-Platform Builds (Recommended)
-This project is configured with **GitHub Actions**. To build for **Windows, macOS, and Linux** simultaneously:
-1. Push your changes to the `main` branch.
-2. Go to the **Actions** tab on your GitHub repository.
-3. The "Build/Release" workflow will automatically build all versions.
-4. If you push a tag starting with `v` (e.g., `v1.1.0`), it will also create a **GitHub Release** with the binaries attached.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/healer-op/Netra-Core.git
+   cd Netra-Core
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Run in development mode:**
+   ```bash
+   npm start
+   ```
+4. **Build for production:**
+   ```bash
+   # Windows
+   npm run build:win
+   # Linux
+   npm run build:linux
+   ```
+   *Note: macOS builds require a macOS environment.*
 
 ## ⚙️ How it Works
 
