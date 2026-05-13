@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netra — Secure DNS Tunnel & Benchmarking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #ffffff;
+            --text-dim: #a1a1aa;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg: #0f0f0f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Background */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(147, 51, 234, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navbar */
+        nav {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .badge {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.04em;
+            background: linear-gradient(to bottom, #fff 40%, #71717a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: var(--bg);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* App Preview Mockup */
+        .preview-container {
+            margin-top: 80px;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+        }
+
+        .mock-ui {
+            background: #080808;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 420 / 700;
+            max-width: 320px;
+            margin: 0 auto;
+            border: 1px solid #1a1a1a;
+            position: relative;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.1);
+        }
+
+        .mock-header {
+            height: 40px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            justify-content: space-between;
+        }
+
+        .mock-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mock-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #222;
+        }
+
+        .mock-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mock-card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .mock-btn {
+            height: 44px;
+            border-radius: 8px;
+            background: var(--accent);
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .mock-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mock-stat {
+            background: #0a0a0a;
+            border: 1px solid #151515;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        /* Platforms */
+        .platforms {
+            padding: 100px 0;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .platform-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .platform-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .platform-card i {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .platform-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .platform-card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .glow-effect {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-bg"></div>
+
+    <nav>
+        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <div class="logo">
+                <img src="logo.png" alt="Netra Logo">
+                Netra
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#platforms">Platforms</a>
+                <a href="https://github.com/healer-op/Netra-Core" target="_blank">GitHub</a>
+            </div>
+            <a href="https://github.com/healer-op/Netra-Core/releases/latest" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;">Download</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <span class="badge">v1.1.0 Now Available</span>
+            <h1>Secure Your Tunnel.</h1>
+            <p class="hero-desc">Experience lightning-fast DNS-over-HTTPS with real-time capacity benchmarking. Lightweight, open-source, and cross-platform.</p>
+            
+            <div class="cta-group">
+                <a href="https://github.com/healer-op/Netra-Core/releases/latest" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download Latest
+                </a>
+                <a href="https://github.com/healer-op/Netra-Core" class="btn btn-secondary">
+                    View Source
+                </a>
+            </div>
+
+            <div class="preview-container">
+                <div class="glow-effect" style="top: 20%; left: 30%;"></div>
+                <div class="mock-ui">
+                    <div class="mock-header">
+                        <div class="mock-dots">
+                            <div class="mock-dot" style="background: #ff5f56;"></div>
+                            <div class="mock-dot" style="background: #ffbd2e;"></div>
+                            <div class="mock-dot" style="background: #27c93f;"></div>
+                        </div>
+                    </div>
+                    <div class="mock-content">
+                        <div style="text-align: center; margin-bottom: 10px;">
+                            <div style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Status</div>
+                            <div style="color: #27c93f; font-weight: 600; font-size: 0.9rem;">Connected</div>
+                        </div>
+                        
+                        <div class="mock-card">
+                            <div style="font-size: 0.65rem; color: #555; margin-bottom: 8px;">DOH ENDPOINT</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #aaa;">cloudflare-dns.com</div>
+                        </div>
+
+                        <div class="mock-stats">
+                            <div class="mock-stat">
+                                <div style="color: #555; margin-bottom: 4px;">PING</div>
+                                <div style="color: var(--accent); font-size: 1rem; font-weight: 600;">24ms</div>
+                            </div>
+                            <div class="mock-stat">
+                                <div style="color: #555; margin-bottom: 4px;">SECURE</div>
+                                <div style="color: #27c93f; font-size: 1rem; font-weight: 600;">YES</div>
+                            </div>
+                        </div>
+
+                        <div class="mock-card" style="margin-top: 10px; background: linear-gradient(135deg, #111 0%, #050505 100%);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.7rem; color: #777;">Benchmark</span>
+                                <span style="font-size: 0.7rem; color: #aaa;">48.2 Mbps</span>
+                            </div>
+                            <div style="height: 4px; background: #222; border-radius: 2px; margin-top: 10px; overflow: hidden;">
+                                <div style="width: 70%; height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"></div>
+                            </div>
+                        </div>
+
+                        <div class="mock-btn" style="display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem;">
+                            Stop Netra
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="platforms" class="platforms">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 1rem;">Cross-Platform by Design</h2>
+            <p style="text-align: center; color: var(--text-dim); margin-bottom: 4rem;">Seamlessly integrated with your OS native networking stack.</p>
+            
+            <div class="platform-grid">
+                <div class="platform-card">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom: 1.5rem;"><path d="M0 3.449L9.75 2.1V11.73H0V3.449zm0 9.15h9.75v9.6L0 20.751v-8.152zm10.55-10.749L24 0v11.73h-13.45V1.85zm0 9.899H24v12.15l-13.45-1.95v-10.2z"/></svg>
+                    <h3>Windows</h3>
+                    <p>Native NSIS installer and portable executables. Fully supports IPv4 and IPv6 DNS management via Netsh.</p>
+                    <a href="https://github.com/healer-op/Netra-Core/releases/latest" class="btn btn-secondary" style="font-size: 0.85rem; width: fit-content;">Get .exe</a>
+                </div>
+
+                <div class="platform-card">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom: 1.5rem;"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.039 2.48-4.5 2.597-4.571-1.429-2.09-3.623-2.324-4.402-2.376-2.05-.156-3.896 1.04-4.597 1.04zm1.883-2.61c.844-1.026 1.416-2.455 1.259-3.87-1.22.051-2.688.818-3.571 1.844-.793.922-1.481 2.35-1.299 3.74 1.35.104 2.727-.728 3.611-1.714z"/></svg>
+                    <h3>macOS</h3>
+                    <p>Optimized DMG packages. Automated DNS configuration using standard NetworkSetup utilities.</p>
+                    <a href="https://github.com/healer-op/Netra-Core/releases/latest" class="btn btn-secondary" style="font-size: 0.85rem; width: fit-content;">Get .dmg</a>
+                </div>
+
+                <div class="platform-card">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom: 1.5rem;"><path d="M11.962 0C10.038 0 8.077.538 6.577 1.577c-.115.077-.192.192-.192.346v.385c0 .192.154.346.346.346h.154c1.269-.769 2.808-1.269 4.385-1.269 3.962 0 7.154 3.192 7.154 7.154 0 1.577-.5 3.115-1.269 4.385v.154c0 .192.154.346.346.346h.385c.154 0 .269-.077.346-.192C19.462 11.923 20 9.962 20 8.038 20 3.615 16.385 0 11.962 0zm-6.077 4.154c-.115 0-.231.038-.308.115-.154.154-.154.385 0 .538l.692.692c.154.154.385.154.538 0 .154-.154.154-.385 0-.538l-.692-.692c-.077-.077-.154-.115-.231-.115zm10.231 0c-.115 0-.231.038-.308.115l-.692.692c-.154.154-.154.385 0 .538.154.154.385.154.538 0l.692-.692c.154-.154.154-.385 0-.538-.077-.077-.154-.115-.231-.115zM2.615 6.692C1.154 8.154.346 10.115.346 12.115c0 4.308 3.5 7.846 7.808 7.846 2 0 3.923-.769 5.385-2.231.154-.154.154-.385 0-.538-.154-.154-.385-.154-.538 0-1.308 1.308-3.038 2.038-4.846 2.038-3.923 0-7.077-3.154-7.077-7.115 0-1.808.731-3.538 2.038-4.846.154-.154.154-.385 0-.538-.154-.154-.385-.154-.538 0zM12 9.077c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zm0 .769c1.231 0 2.231 1 2.231 2.231s-1 2.231-2.231 2.231-2.231-1-2.231-2.231 1-2.231 2.231-2.231zM17.308 17.308c-.154 0-.308.038-.385.154l-.692 1.154c-.115.192-.038.423.154.538.192.115.423.038.538-.154l.692-1.154c.115-.192.038-.423-.154-.538-.038-.038-.115-.038-.154-.038z"/></svg>
+                    <h3>Linux</h3>
+                    <p>Standard AppImage format for universal compatibility. Supports ResolveCTL and NetworkManager.</p>
+                    <a href="https://github.com/healer-op/Netra-Core/releases/latest" class="btn btn-secondary" style="font-size: 0.85rem; width: fit-content;">Get .AppImage</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Netra Core Project. Released under ISC License.</p>
+            <p style="margin-top: 10px;">Built with ❤️ for a safer web.</p>
+        </div>
+    </footer>
+</body>
+</html>
