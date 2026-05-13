@@ -29,19 +29,32 @@
     },
     "icon": "logo.png",
     "win": {
-      "target": "portable",
-      "requestedExecutionLevel": "requireAdministrator",
-      "artifactName": "${productName}-${version}-windows.${ext}"
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Netra",
+      "artifactName": "${productName}-Windows-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-Windows-Portable-${version}.${ext}"
     },
     "mac": {
       "target": "dmg",
       "category": "public.app-category.utilities",
-      "artifactName": "${productName}-${version}-macos.${ext}"
+      "artifactName": "${productName}-MacOS-${version}.${ext}"
     },
     "linux": {
       "target": "AppImage",
       "category": "Utility",
-      "artifactName": "${productName}-${version}-linux.${ext}"
+      "artifactName": "${productName}-Linux-${version}.${ext}"
     },
     "files": [
       "backend/**/*",
