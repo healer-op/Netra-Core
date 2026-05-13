@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netra - Core</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-shell">
+        <div class="scanline-overlay"></div>
+
+        <!-- Speedtest Overlay -->
+        <div id="speedtest-overlay" class="speedtest-overlay hidden">
+            <div class="speedtest-card">
+                <div class="speedtest-header">
+                    <span class="speedtest-title">SPEED TEST</span>
+                    <button id="speedtest-close" class="st-close">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                            <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="speedtest-body">
+                    <!-- Running state -->
+                    <div id="st-running" class="st-state hidden">
+                        <div class="st-spinner">
+                            <div class="spinner-ring"></div>
+                        </div>
+                        <div class="st-running-label" id="st-running-label">MEASURING DOWNLOAD...</div>
+                        <div class="st-sub">Via Cloudflare speed endpoint</div>
+                    </div>
+
+                    <!-- Idle / result state -->
+                    <div id="st-result" class="st-state">
+                        <div class="st-metrics">
+                            <div class="st-metric">
+                                <div class="st-metric-icon down">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                        <polyline points="17 6 23 6 23 12"/>
+                                    </svg>
+                                </div>
+                                <div class="st-metric-data">
+                                    <span class="st-metric-label">DOWNLOAD</span>
+                                    <span class="st-metric-value" id="st-dl-val">--</span>
+                                    <span class="st-metric-unit">Mbps</span>
+                                </div>
+                            </div>
+                            <div class="st-divider"></div>
+                            <div class="st-metric">
+                                <div class="st-metric-icon up">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
+                                        <polyline points="17 18 23 18 23 12"/>
+                                    </svg>
+                                </div>
+                                <div class="st-metric-data">
+                                    <span class="st-metric-label">UPLOAD</span>
+                                    <span class="st-metric-value" id="st-ul-val">--</span>
+                                    <span class="st-metric-unit">Mbps</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="st-via">Via Netflix Fast.com + Cloudflare</div>
+
+                        <button id="st-run-btn" class="st-run-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            RUN TEST
+                        </button>
+                        <div id="st-error" class="st-error hidden"></div>
+                    </div>
+                </div>
+
+                <div class="speedtest-footer">
+                    <span class="st-note">No account. No rate limit. Results via CDN.</span>
+                </div>
+            </div>
+        </div>
+
+        <header class="draggable">
+            <div class="brand">
+                <div class="pulse-ring" id="pulse-ring">
+                    <div class="dot" id="status-dot"></div>
+                </div>
+                <div class="brand-text">
+                    <span class="logo-text">NETRA</span>
+                    <span class="logo-sub">CORE v1.0.5</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span class="build-tag">BUILD 2026.05</span>
+                <button id="close-btn" class="nav-btn" title="Quit">
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                        <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Action Button -->
+            <div class="action-section">
+                <button id="netra-action-btn" class="main-action-btn">
+                    <div class="btn-inner">
+                        <div class="btn-ring"></div>
+                        <div class="btn-content">
+                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                            <span id="status-label">READY</span>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                    </div>
+                    <span class="stat-label">DOWN</span>
+                    <span class="stat-value" id="st-dl-main">-- <em>Mbps</em></span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>
+                        </svg>
+                    </div>
+                    <span class="stat-label">UP</span>
+                    <span class="stat-value" id="st-ul-main">-- <em>Mbps</em></span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <span class="stat-label">PING</span>
+                    <span class="stat-value" id="ping-val">-- <em>ms</em></span>
+                </div>
+                <div class="stat-card accent" id="speedtest-trigger" title="Run speed test">
+                    <div class="stat-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <span class="stat-label">SPEED TEST</span>
+                    <span class="stat-value" style="font-size:0.65rem">REFRESH</span>
+                </div>
+            </div>
+
+            <!-- Provider Selector -->
+            <div class="field-group">
+                <label class="field-label">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    DNS PROVIDER
+                </label>
+                <div class="select-wrapper">
+                    <select id="server-select">
+                        <option value="https://dns.google/dns-query">Google Public DNS</option>
+                        <option value="https://cloudflare-dns.com/dns-query">Cloudflare 1.1.1.1</option>
+                        <option value="https://dns.quad9.net/dns-query">Quad9 Secure DNS</option>
+                        <option value="https://doh.cleanbrowsing.org/doh/security-filter/">CleanBrowsing Filter</option>
+                        <option value="https://doh.applied-privacy.net/query">Foundation for Applied Privacy</option>
+                        <option value="https://doh.dns.sb/dns-query">DNS.SB</option>
+                        <option value="https://public.dns.iij.jp/dns-query">Internet Initiative Japan</option>
+                        <option value="https://dns.twnic.tw/dns-query">TWNIC Quad101</option>
+                        <option value="https://rdns.faelix.net/">FAELIX</option>
+                        <option value="https://dns.aa.net.uk/dns-query">Andrews & Arnold</option>
+                        <option value="https://doh.42l.fr/dns-query">42l Association</option>
+                        <option value="https://dns.digitale-gesellschaft.ch/dns-query">Digitale Gesellschaft</option>
+                        <option value="https://fi.doh.dns.snopyta.org/dns-query">Snopyta</option>
+                        <option value="https://doh.opendns.com/dns-query">OpenDNS</option>
+                        <option value="https://doh.dnslify.com/dns-query">DNSlify</option>
+                        <option value="https://private.canadianshield.cira.ca/dns-query">Canadian Shield</option>
+                    </select>
+                    <div class="select-arrow">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Panel -->
+            <div class="logs-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span class="live-dot" id="live-dot"></span>
+                        IP LOGS
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center">
+                        <span class="log-count" style="color:var(--accent); opacity:0.8"><span id="query-count">0</span> queries</span>
+                        <span class="log-count" id="log-count">0 entries</span>
+                    </div>
+                </div>
+                <div id="logs-container" class="scroll-box">
+                    <div class="log-line system">
+                        <div class="log-icon">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div class="log-content">Initializing Netra v1.0.5...</div>
+                        <div class="log-time">--:--:--</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <span class="author">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                HEALER-OP
+            </span>
+            <span class="footer-status" id="footer-status">OFFLINE</span>
+        </footer>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>

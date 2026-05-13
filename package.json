@@ -1,0 +1,71 @@
+{
+  "name": "netra",
+  "version": "1.1.0",
+  "description": "Secure DNS Tunnel with Capacity Benchmarking",
+  "main": "backend/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:local": "electron-builder --win --linux",
+    "build:all": "electron-builder --win --mac --linux"
+  },
+  "build": {
+    "appId": "com.healerop.netra",
+    "productName": "Netra",
+    "asar": true,
+    "compression": "maximum",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "healer-op",
+        "repo": "Netra-Core"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "icon": "logo.png",
+    "win": {
+      "target": "portable",
+      "requestedExecutionLevel": "requireAdministrator",
+      "artifactName": "${productName}-${version}-windows.${ext}"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities",
+      "artifactName": "${productName}-${version}-macos.${ext}"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Utility",
+      "artifactName": "${productName}-${version}-linux.${ext}"
+    },
+    "files": [
+      "backend/**/*",
+      "frontend/**/*",
+      "package.json"
+    ]
+  },
+  "keywords": [
+    "dns",
+    "doh",
+    "security",
+    "speedtest"
+  ],
+  "author": "HEALER-OP",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^42.0.1",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "dns-packet": "^5.6.1",
+    "electron-updater": "^6.1.7",
+    "node-fetch": "^3.3.2",
+    "systeminformation": "^5.31.6"
+  }
+}
